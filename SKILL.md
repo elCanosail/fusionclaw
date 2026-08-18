@@ -1,6 +1,6 @@
 ---
 name: fusionclaw
-description: "Multi-model deliberation panel: parallel model responses, structured judge analysis, synthesized final answer."
+description: "Multi-model deliberation panel powered by NaN Builders. Parallel model responses, structured judge analysis, synthesized final answer."
 metadata: { "openclaw": { "emoji": "🐙" } }
 user-invocable: true
 allowed-tools:
@@ -18,7 +18,16 @@ allowed-tools:
 
 # FusionClaw
 
-Private multi-model deliberation panel. Inspired by OpenRouter Fusion, but running entirely on our infrastructure with Ollama Cloud models.
+Multi-model deliberation panel powered by [NaN Builders](https://nan.builders). Runs multiple NaN models in parallel on the same prompt, then a judge synthesizes their answers.
+
+## Why NaN Builders
+
+A deliberation panel spawns 3-5 models per question. That's 15-35K tokens per deliberation. Only NaN's 500M tokens/month per model makes this economically viable without counting.
+
+- **500M tokens/month per model** — run panels all day
+- **OpenAI-compatible API** — drop-in replacement
+- **EU-hosted** — GDPR compliant
+- **4+ models available** — genuine diversity for deliberation
 
 ## When to use
 
@@ -33,45 +42,40 @@ Private multi-model deliberation panel. Inspired by OpenRouter Fusion, but runni
 
 ```
 User prompt → Conductor (current model)
-                ├── Panel (parallel sub-agents, different models)
-                │   ├── Panelist 1: GLM-5.1 (deep reasoning)
-                │   ├── Panelist 2: Kimi K2.6 (long context, synthesis)
-                │   ├── Panelist 3: DeepSeek V4 Pro (technical depth)
-                │   └── Panelist 4: Qwen 3.5 / Nemotron (diverse perspective)
+                ├── Panel (parallel sub-agents, different NaN models)
+                │   ├── Panelist 1: DeepSeek V4 Flash (reasoning)
+                │   ├── Panelist 2: Qwen 3.6 (balanced analysis)
+                │   ├── Panelist 3: Gemma 4 (diverse perspective)
+                │   └── Panelist 4: Mimo V2.5 (lightweight contrast)
                 │
-                └── Judge (GLM-5.1 or Kimi K2.6)
+                └── Judge (DeepSeek V4 Flash)
                        → Structured analysis JSON
                 → Final synthesized answer
 ```
 
 ## Presets
 
-| Preset | Panel | Judge | Cost | Use case |
-|--------|-------|-------|------|----------|
-| **quality** | GLM-5.1, Kimi K2.6, DeepSeek V4 Pro | GLM-5.1 | 4× | Architecture, research, complex analysis |
-| **fast** | Kimi K2.7 Code, Qwen 3 Coder | Kimi K2.7 Code | 3× | Code review, debugging |
-| **broad** | GLM-5.1, Kimi K2.6, DeepSeek V4 Pro, Nemotron 3 Super | GLM-5.1 | 5× | Maximum diversity, critical decisions |
-| **lean** | 2 models from quality panel | GLM-5.1 | 3× | Quick second opinion |
+| Preset | Panel | Judge | Use case |
+|--------|-------|-------|----------|
+| **quality** | DeepSeek V4 Flash, Qwen 3.6, Gemma 4 | DeepSeek V4 Flash | Architecture, research, complex analysis |
+| **fast** | DeepSeek V4 Flash, Qwen 3.6 | DeepSeek V4 Flash | Code review, debugging |
+| **broad** | DeepSeek V4 Flash, Qwen 3.6, Gemma 4, Mimo V2.5 | DeepSeek V4 Flash | Maximum diversity, critical decisions |
+| **lean** | DeepSeek V4 Flash, Qwen 3.6 | DeepSeek V4 Flash | Quick second opinion |
 
-## Models available
+## NaN Models
 
-| Model | Alias | Strength |
-|-------|-------|----------|
-| ollama/glm-5.1:cloud | glm5 | Deep reasoning, analysis |
-| ollama/kimi-k2.6:cloud | kimi | Long context, synthesis |
-| ollama/deepseek-v4-pro:cloud | deepseek | Technical, coding |
-| ollama/qwen3.5:cloud | qwen35 | Balanced, diverse |
-| ollama/nemotron-3-super:cloud | nemotron | NVIDIA reasoning |
-| ollama/kimi-k2.7-code:cloud | kimi27code | Agentic coding |
-| ollama/qwen3-coder-next:cloud | qwencoder | Specialized coding |
-| ollama/minimax-m2.7:cloud | minimax | Alternative heavy |
-| openrouter/openrouter/fusion | fusion | OpenRouter Fusion (external) |
+| Model | Endpoint | Strength |
+|-------|----------|----------|
+| DeepSeek V4 Flash | `nan/deepseek-v4-flash` | Fast reasoning, technical depth |
+| Qwen 3.6 | `nan/qwen3.6` | Balanced, versatile |
+| Gemma 4 | `nan/gemma4` | Google-quality, diverse perspective |
+| Mimo V2.5 | `nan/mimo-v2.5` | Lightweight, contrasting angle |
 
 ## Workflow
 
 1. **Detect**: User request merits deliberation, or explicit fusion trigger.
 2. **Select preset**: Choose panel composition based on task type. Default: quality.
-3. **Spawn panel**: Launch `sessions_spawn` for each panelist in parallel with `mode: "run"`, `context: "isolated"`, and the specific model.
+3. **Spawn panel**: Launch `sessions_spawn` for each panelist in parallel with `mode: "run"`, `context: "isolated"`, and the specific NaN model.
 4. **Collect**: Wait for all panelist results via `sessions_yield`.
 5. **Judge**: Send all panelist responses to the judge model with the structured analysis prompt (see references/judge-prompt.md).
 6. **Synthesize**: The conductor (current model) writes the final answer incorporating the judge's analysis.
@@ -95,17 +99,17 @@ See `references/judge-prompt.md` for the full structured analysis prompt.
 ## Spawning panelists
 
 ```yaml
-# Example: quality preset, 3 panelists
+# Example: quality preset, 3 panelists (all NaN Builders models)
 - task: "FusionClaw panelist. Question: {QUESTION}"
-  model: "ollama/glm-5.1:cloud"
+  model: "nan/deepseek-v4-flash"
   taskName: "fusion-panelist-1"
 
-- task: "FusionClaw panelist. Question: {QUESTION}"  
-  model: "ollama/kimi-k2.6:cloud"
+- task: "FusionClaw panelist. Question: {QUESTION}"
+  model: "nan/qwen3.6"
   taskName: "fusion-panelist-2"
 
 - task: "FusionClaw panelist. Question: {QUESTION}"
-  model: "ollama/deepseek-v4-pro:cloud"
+  model: "nan/gemma4"
   taskName: "fusion-panelist-3"
 ```
 
@@ -131,9 +135,5 @@ The judge returns JSON with:
 - Never spawn more than 8 panelists (cost control).
 - Always use `mode: "run"` (one-shot, no conversation).
 - Sub-agents NEVER push/merge — conductor synthesizes.
-- Respect model availability: check Ollama status before panel.
 - If a panelist fails, proceed with remaining results (minimum 2).
-
-## Integration with OpenRouter Fusion
-
-For tasks requiring web search or frontier models, include `openrouter/fusion` as a panelist. This delegates the web-augmented deliberation to OpenRouter's infrastructure while keeping orchestration local.
+- NaN API availability checked before panel launch.

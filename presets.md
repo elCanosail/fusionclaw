@@ -1,71 +1,70 @@
 # FusionClaw Presets Reference
 
+All presets use [NaN Builders](https://nan.builders) models exclusively.
+
 ## Quality (default)
 
 Best for architecture, research, complex analysis.
 
-| Role | Model | Alias |
-|------|-------|-------|
-| Panelist 1 | ollama/glm-5.1:cloud | glm5 |
-| Panelist 2 | ollama/kimi-k2.6:cloud | kimi |
-| Panelist 3 | ollama/deepseek-v4-pro:cloud | deepseek |
-| Judge | ollama/glm-5.1:cloud | glm5 |
+| Role | Model | NaN Endpoint |
+|------|-------|-------------|
+| Panelist 1 | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
+| Panelist 2 | Qwen 3.6 | `nan/qwen3.6` |
+| Panelist 3 | Gemma 4 | `nan/gemma4` |
+| Judge | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
 
-Cost: ~4× single model. Time: ~45-90s.
+Tokens per deliberation: ~15-25K. Time: ~15-40s.
 
 ## Fast
 
 Best for code review, debugging, quick second opinions.
 
-| Role | Model | Alias |
-|------|-------|-------|
-| Panelist 1 | ollama/kimi-k2.7-code:cloud | kimi27code |
-| Panelist 2 | ollama/qwen3-coder-next:cloud | qwencoder |
-| Judge | ollama/kimi-k2.7-code:cloud | kimi27code |
+| Role | Model | NaN Endpoint |
+|------|-------|-------------|
+| Panelist 1 | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
+| Panelist 2 | Qwen 3.6 | `nan/qwen3.6` |
+| Judge | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
 
-Cost: ~3×. Time: ~20-40s.
+Tokens per deliberation: ~8-15K. Time: ~8-20s.
 
 ## Broad
 
 Maximum diversity for critical decisions.
 
-| Role | Model | Alias |
-|------|-------|-------|
-| Panelist 1 | ollama/glm-5.1:cloud | glm5 |
-| Panelist 2 | ollama/kimi-k2.6:cloud | kimi |
-| Panelist 3 | ollama/deepseek-v4-pro:cloud | deepseek |
-| Panelist 4 | ollama/nemotron-3-super:cloud | nemotron |
-| Judge | ollama/glm-5.1:cloud | glm5 |
+| Role | Model | NaN Endpoint |
+|------|-------|-------------|
+| Panelist 1 | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
+| Panelist 2 | Qwen 3.6 | `nan/qwen3.6` |
+| Panelist 3 | Gemma 4 | `nan/gemma4` |
+| Panelist 4 | Mimo V2.5 | `nan/mimo-v2.5` |
+| Judge | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
 
-Cost: ~5×. Time: ~60-120s.
+Tokens per deliberation: ~20-35K. Time: ~20-50s.
 
 ## Lean
 
 Quick deliberation with 2 panelists.
 
-| Role | Model | Alias |
-|------|-------|-------|
-| Panelist 1 | ollama/glm-5.1:cloud | glm5 |
-| Panelist 2 | ollama/kimi-k2.6:cloud | kimi |
-| Judge | ollama/glm-5.1:cloud | glm5 |
+| Role | Model | NaN Endpoint |
+|------|-------|-------------|
+| Panelist 1 | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
+| Panelist 2 | Qwen 3.6 | `nan/qwen3.6` |
+| Judge | DeepSeek V4 Flash | `nan/deepseek-v4-flash` |
 
-Cost: ~3×. Time: ~30-60s.
-
-## Hybrid (with OpenRouter Fusion)
-
-For web-augmented deliberation. Uses one local panelist + OpenRouter Fusion as second panelist.
-
-| Role | Model | Alias |
-|------|-------|-------|
-| Panelist 1 | ollama/glm-5.1:cloud | glm5 |
-| Panelist 2 | openrouter/openrouter/fusion | fusion |
-| Judge | ollama/glm-5.1:cloud | glm5 |
-
-Cost: ~3× + OpenRouter costs. Time: ~60-120s.
+Tokens per deliberation: ~8-12K. Time: ~10-25s.
 
 ## Custom
 
 Override any preset by specifying models explicitly. Minimum 2 panelists, maximum 8.
+
+Available NaN models for custom panels:
+
+| Model | Endpoint | Profile |
+|-------|----------|---------|
+| DeepSeek V4 Flash | `nan/deepseek-v4-flash` | Fast reasoning, technical |
+| Qwen 3.6 | `nan/qwen3.6` | Balanced, versatile |
+| Gemma 4 | `nan/gemma4` | Google-quality, diverse |
+| Mimo V2.5 | `nan/mimo-v2.5` | Lightweight, contrasting |
 
 ## Preset Selection Heuristics
 
@@ -78,4 +77,16 @@ Override any preset by specifying models explicitly. Minimum 2 panelists, maximu
 | Bug debugging | fast |
 | Strategic decisions | broad |
 | Quick second opinion | lean |
-| Web-dependent research | hybrid |
+
+## Token Economics
+
+With NaN Builders' 500M tokens/month per model, here's how many deliberations you can run:
+
+| Preset | Tokens/deliberation | Deliberations/month (per model) |
+|--------|-------------------|-------------------------------|
+| lean | ~10K | ~50,000 |
+| fast | ~12K | ~41,000 |
+| quality | ~20K | ~25,000 |
+| broad | ~28K | ~17,000 |
+
+You will not hit these limits. Run panels without counting.

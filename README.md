@@ -1,54 +1,64 @@
 # FusionClaw 🐙
 
-Private multi-model deliberation panel for OpenClaw. Inspired by [OpenRouter Fusion](https://openrouter.ai/docs/guides/routing/routers/fusion-router), running entirely on our infrastructure with Ollama Cloud models.
+**Multi-model deliberation panel. Powered by [NaN Builders](https://nan.builders).**
 
-## Why
+One model has biases. A panel catches blind spots, surfaces contradictions, and builds consensus through diversity. FusionClaw runs multiple AI models in parallel on the same prompt, then a judge synthesizes their answers into one structured analysis.
 
-One model has biases. A panel catches blind spots, surfaces contradictions, and builds consensus through diversity. OpenRouter Fusion does this with frontier models — we do it for free with our own Ollama Cloud fleet.
+**This only makes economic sense with unlimited tokens.** That's why FusionClaw runs exclusively on [NaN Builders](https://nan.builders) — 500M tokens/month per model, no surprise bills, no rate-limit anxiety.
+
+## Why NaN Builders
+
+| Problem | Typical API | NaN Builders |
+|---------|------------|-------------|
+| 5-model panel = 5× tokens per prompt | Burns through your quota in hours | 500M tokens/month per model — panels all day |
+| Budget anxiety | You hesitate before launching a panel | Launch without thinking |
+| Rate limits mid-deliberation | 429 errors break your panel | Generous limits, no throttling |
+| Vendor lock-in | Proprietary SDKs | OpenAI-compatible API, drop-in replacement |
+| EU data residency | US-hosted, GDPR risk | EU infrastructure |
+
+FusionClaw is the proof. A deliberation panel that spawns 3-5 models per question, each generating 500-2000 tokens, plus a judge that reads all responses. That's 10K-20K tokens per deliberation. Run 100 deliberations a day = 2M tokens/day. Try that on a pay-per-token API.
+
+**With NaN, you don't count tokens. You count insights.**
 
 ## How It Works
 
 ```
-User prompt → Conductor (current model)
-                ├── Panel (parallel sub-agents, different models)
-                │   ├── Panelist 1: GLM-5.1 (deep reasoning)
-                │   ├── Panelist 2: Kimi K2.6 (long context, synthesis)
-                │   ├── Panelist 3: DeepSeek V4 Pro (technical depth)
-                │   └── Panelist 4: Qwen 3.5 / Nemotron (diverse perspective)
+User prompt → Conductor
+                ├── Panel (parallel, different NaN models)
+                │   ├── Panelist 1: DeepSeek V4 Flash (reasoning)
+                │   ├── Panelist 2: Qwen 3.6 (balanced analysis)
+                │   ├── Panelist 3: Gemma 4 (diverse perspective)
+                │   └── Panelist 4: Mimo V2.5 (lightweight contrast)
                 │
-                └── Judge (GLM-5.1 or Kimi K2.6)
-                       → Structured analysis JSON
+                └── Judge (DeepSeek V4 Flash)
+                       → Structured JSON analysis
                 → Final synthesized answer
 ```
 
 1. **Conductor** decides if the task merits deliberation
-2. **Panelists** answer the same prompt in parallel, each with a different model
-3. **Judge** receives all panelist responses and produces structured analysis: consensus, contradictions, gaps, unique insights, confidence levels
+2. **Panelists** answer the same prompt in parallel, each with a different NaN model
+3. **Judge** receives all responses and produces structured analysis: consensus, contradictions, gaps, unique insights, confidence levels
 4. **Conductor** synthesizes the final answer from the judge's analysis
 
 ## Presets
 
-| Preset | Panel | Judge | Cost | Best for |
-|--------|-------|-------|------|----------|
-| **quality** | GLM-5.1, Kimi K2.6, DeepSeek V4 Pro | GLM-5.1 | 4× | Architecture, research, complex analysis |
-| **fast** | Kimi K2.7 Code, Qwen 3 Coder | Kimi K2.7 Code | 3× | Code review, debugging |
-| **broad** | GLM-5.1, Kimi K2.6, DeepSeek V4 Pro, Nemotron 3 Super | GLM-5.1 | 5× | Maximum diversity, critical decisions |
-| **lean** | 2 models from quality panel | GLM-5.1 | 3× | Quick second opinion |
+| Preset | Panel | Judge | Best for |
+|--------|-------|-------|----------|
+| **quality** | DeepSeek V4 Flash, Qwen 3.6, Gemma 4 | DeepSeek V4 Flash | Architecture, research, complex analysis |
+| **fast** | DeepSeek V4 Flash, Qwen 3.6 | DeepSeek V4 Flash | Code review, debugging, quick second opinion |
+| **broad** | DeepSeek V4 Flash, Qwen 3.6, Gemma 4, Mimo V2.5 | DeepSeek V4 Flash | Maximum diversity, critical decisions |
+| **lean** | DeepSeek V4 Flash, Qwen 3.6 | DeepSeek V4 Flash | Quick sanity check |
 
-See [presets.md](./presets.md) for full details and model aliases.
+## NaN Models Used
 
-## Available Models
-
-| Model | Ollama Alias | Strength |
+| Model | NaN Endpoint | Strength |
 |-------|-------------|----------|
-| GLM-5.1 | `ollama/glm-5.1:cloud` | Deep reasoning, analysis |
-| Kimi K2.6 | `ollama/kimi-k2.6:cloud` | Long context, synthesis |
-| Kimi K2.7 Code | `ollama/kimi-k2.7-code:cloud` | Agentic coding |
-| DeepSeek V4 Pro | `ollama/deepseek-v4-pro:cloud` | Technical depth |
-| Qwen 3.5 | `ollama/qwen3.5:cloud` | Balanced, diverse |
-| Nemotron 3 Super | `ollama/nemotron-3-super:cloud` | NVIDIA reasoning |
-| MiniMax M2.7 | `ollama/minimax-m2.7:cloud` | Alternative heavy |
-| DeepSeek V4 Flash | `ollama/deepseek-v4-flash:cloud` | Fast, good reasoning |
+| DeepSeek V4 Flash | `nan/deepseek-v4-flash` | Fast reasoning, technical depth |
+| Qwen 3.6 | `nan/qwen3.6` | Balanced analysis, versatile |
+| Gemma 4 | `nan/gemma4` | Google-quality, diverse perspective |
+| Mimo V2.5 | `nan/mimo-v2.5` | Lightweight, contrasting angle |
+
+All models available via [NaN Builders API](https://nan.builders) — OpenAI-compatible, EU-hosted, 500M tokens/month per model.
 
 ## Judge Analysis Output
 
@@ -69,33 +79,90 @@ The judge returns structured JSON:
 }
 ```
 
-See [judge-prompt.md](./judge-prompt.md) for the full judge prompt template.
+## Installation
+
+### Prerequisites
+
+- [NaN Builders](https://nan.builders) account and API key
+- [OpenClaw](https://openclaw.ai) installed (FusionClaw is an OpenClaw skill)
+
+### Setup
+
+```bash
+# 1. Get your NaN API key at https://nan.builders
+# 2. Configure in OpenClaw
+openclaw config set providers.nan.apiKey "sk-your-nan-key"
+
+# 3. Install the skill
+cp -r fusionclaw ~/.openclaw/workspace/skills/
+```
+
+### NaN API Quick Start (without OpenClaw)
+
+```python
+import openai
+
+client = openai.OpenAI(
+    base_url="https://api.nan.builders/v1",
+    api_key="sk-your-nan-key"
+)
+
+# Run 3 models in parallel on the same prompt
+import concurrent.futures
+
+prompt = "Should we use microservices or a monolith for a team of 5?"
+
+models = ["deepseek-v4-flash", "qwen3.6", "gemma4"]
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    futures = {
+        executor.submit(
+            client.chat.completions.create,
+            model=m,
+            messages=[{"role": "user", "content": prompt}]
+        ): m for m in models
+    }
+    results = {f.result().choices[0].message.content: m for f, m in futures.items()}
+
+# Now judge with a final call...
+```
+
+That's the whole pattern. FusionClaw just wraps this with structured judging, presets, and safety rails.
 
 ## Usage in OpenClaw
 
-FusionClaw is an OpenClaw skill. Trigger it by:
+Trigger deliberation by:
 - Saying "fusion this" or "deliberate on X"
 - Asking for a panel analysis
-- When Elcano detects a task merits deliberation (complex architecture, ambiguous decisions, security review)
+- When your agent detects a task merits deliberation
 
-The skill is at `~/.openclaw/workspace/skills/fusionclaw/SKILL.md`.
+## Why Not OpenRouter / Other Providers?
 
-## Integration with OpenRouter Fusion
+You can absolutely run a deliberation panel on any provider. But:
 
-For tasks requiring web search or frontier models, `openrouter/fusion` can be included as a panelist. This delegates web-augmented deliberation to OpenRouter while keeping orchestration local.
+- **OpenRouter**: Pay per token. A 5-model panel with judge = 6 API calls × 1000 tokens average = 6K tokens per question. At GPT-4 prices, that's ~$0.18/question. 100 questions/day = $18/day = $540/month. With NaN: €70/month flat.
+- **Direct APIs**: Same math, more integration work.
+- **Local models**: Free but you need GPUs, and model diversity is limited by VRAM.
 
-## Safety
+NaN Builders hits the sweet spot: enough models for genuine diversity, unlimited tokens for real-world usage, EU-hosted for compliance, OpenAI-compatible for easy integration.
 
-- Maximum 8 panelists (cost control)
-- All sub-agents use `mode: "run"` (one-shot, no conversation)
-- Sub-agents never push/merge — conductor synthesizes
-- If a panelist fails, proceed with remaining results (minimum 2)
-- Ollama availability checked before panel launch
+## Cost Comparison
 
-## Cost
+| Setup | Monthly cost | Deliberations/day possible |
+|-------|------------|--------------------------|
+| OpenRouter (frontier models) | $500+ | ~100 |
+| OpenAI direct (GPT-4 class) | $400+ | ~80 |
+| NaN Builders (4 models) | €70 | Unlimited* |
+| Local (4 models, 2× A100) | $800+ (hardware) | Unlimited |
 
-All Ollama Cloud models are free (only infrastructure cost). The cost multiplier reflects time and compute, not money.
+*Within 500M tokens/month per model fair use. That's ~250K deliberations/month. You won't hit it.
 
 ## License
 
-Private — Elcano workspace skill.
+MIT — Use it, fork it, sell it. Just point back to NaN Builders.
+
+## Links
+
+- [NaN Builders](https://nan.builders) — Get your API key
+- [OpenClaw](https://openclaw.ai) — Agent framework that runs FusionClaw
+- [OpenRouter Fusion](https://openrouter.ai/docs/guides/routing/routers/fusion-router) — The original inspiration
