@@ -38,6 +38,14 @@ A deliberation panel spawns 3-5 models per question. That's 15-35K tokens per de
 - User explicitly requests deliberation: "fusion this", "deliberate on X", "panel analysis"
 - **NOT for**: simple lookups, straightforward edits, tasks where one model is clearly sufficient
 
+### When NOT to use
+
+- Simple lookups or factual questions one model can answer
+- Straightforward code edits with no architectural implications
+- Time-critical responses where parallel deliberation adds latency
+- Tasks requiring a single authoritative answer, not diverse perspectives
+- When token budget is a concern (use a single model instead)
+
 ## Architecture
 
 ```
@@ -77,7 +85,7 @@ User prompt → Conductor (current model)
 2. **Select preset**: Choose panel composition based on task type. Default: quality.
 3. **Spawn panel**: Launch `sessions_spawn` for each panelist in parallel with `mode: "run"`, `context: "isolated"`, and the specific NaN model.
 4. **Collect**: Wait for all panelist results via `sessions_yield`.
-5. **Judge**: Send all panelist responses to the judge model with the structured analysis prompt (see references/judge-prompt.md).
+5. **Judge**: Send all panelist responses to the judge model with the structured analysis prompt (see judge-prompt.md).
 6. **Synthesize**: The conductor (current model) writes the final answer incorporating the judge's analysis.
 
 ## Panelist prompt template
@@ -94,7 +102,7 @@ Provide your analysis. Be specific, flag uncertainties, and state your confidenc
 
 ## Judge prompt template
 
-See `references/judge-prompt.md` for the full structured analysis prompt.
+See `judge-prompt.md` for the full structured analysis prompt.
 
 ## Spawning panelists
 

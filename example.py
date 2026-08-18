@@ -11,10 +11,11 @@ import concurrent.futures
 from openai import OpenAI
 
 # ── Config ──────────────────────────────────────────────────────────
-NaN_API_KEY = "***"  # Get yours at https://nan.builders
+import os
+NaN_API_KEY = os.environ.get("NAN_API_KEY", "your-api-key-here")  # Get yours at https://nan.builders
 NaN_BASE_URL = "https://api.nan.builders/v1"
 
-client = OpenAI(base_url=NaN_BASE_URL, api_key=NaN_API_KEY)
+client = OpenAI(base_url=NaN_BASE_URL, api_key="NaN_API_KEY")
 
 # ── Models ──────────────────────────────────────────────────────────
 PANEL_MODELS = [

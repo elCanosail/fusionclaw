@@ -4,21 +4,21 @@
 
 One model has biases. A panel catches blind spots, surfaces contradictions, and builds consensus through diversity. FusionClaw runs multiple AI models in parallel on the same prompt, then a judge synthesizes their answers into one structured analysis.
 
-**This only makes economic sense with unlimited tokens.** That's why FusionClaw runs exclusively on [NaN Builders](https://nan.builders) — 500M tokens/month per model, no surprise bills, no rate-limit anxiety.
+**Deliberation panels are token-heavy. Unlimited tokens make them practical.** That's why FusionClaw runs exclusively on [NaN Builders](https://nan.builders) — 500M tokens/month per model, no surprise bills, no rate-limit anxiety.
 
 ## Why NaN Builders
 
 | Problem | Typical API | NaN Builders |
 |---------|------------|-------------|
 | 5-model panel = 5× tokens per prompt | Burns through your quota in hours | 500M tokens/month per model — panels all day |
-| Budget anxiety | You hesitate before launching a panel | Launch without thinking |
+| Budget anxiety | You hesitate before launching a panel | Launch without budget anxiety |
 | Rate limits mid-deliberation | 429 errors break your panel | Generous limits, no throttling |
 | Vendor lock-in | Proprietary SDKs | OpenAI-compatible API, drop-in replacement |
 | EU data residency | US-hosted, GDPR risk | EU infrastructure |
 
-FusionClaw is the proof. A deliberation panel that spawns 3-5 models per question, each generating 500-2000 tokens, plus a judge that reads all responses. That's 10K-20K tokens per deliberation. Run 100 deliberations a day = 2M tokens/day. Try that on a pay-per-token API.
+FusionClaw is the proof. A deliberation panel that spawns 3-5 models per question, each generating 500-2000 tokens, plus a judge that reads all responses. That's 10K-20K tokens per deliberation. Run 100 deliberations a day = 2M tokens/day. That adds up fast on pay-per-token APIs.
 
-**With NaN, you don't count tokens. You count insights.**
+**With NaN, token cost stops being the limiting factor.**
 
 ## How It Works
 
@@ -59,6 +59,8 @@ User prompt → Conductor
 | Mimo V2.5 | `nan/mimo-v2.5` | Lightweight, contrasting angle |
 
 All models available via [NaN Builders API](https://nan.builders) — OpenAI-compatible, EU-hosted, 500M tokens/month per model.
+
+> **Note:** The model names above (e.g. `deepseek-v4-flash`, `qwen3.6`) are NaN Builders API identifiers. NaN Builders hosts these models on their EU infrastructure with an OpenAI-compatible API. See [nan.builders](https://nan.builders) for the full model list and pricing.
 
 ## Judge Analysis Output
 
@@ -136,6 +138,13 @@ Trigger deliberation by:
 - Asking for a panel analysis
 - When your agent detects a task merits deliberation
 
+## When NOT to use FusionClaw
+
+- **Simple questions**: If one model can answer it confidently, don't waste a panel.
+- **Time-critical tasks**: Parallel deliberation adds 15-50s of latency.
+- **Straightforward edits**: No need for diverse perspectives on a one-line fix.
+- **Budget-constrained projects**: If you're on a pay-per-token API, the math changes. FusionClaw assumes NaN's flat-rate model.
+
 ## Why Not OpenRouter / Other Providers?
 
 You can absolutely run a deliberation panel on any provider. But:
@@ -155,7 +164,7 @@ NaN Builders hits the sweet spot: enough models for genuine diversity, unlimited
 | NaN Builders (4 models) | €70 | Unlimited* |
 | Local (4 models, 2× A100) | $800+ (hardware) | Unlimited |
 
-*Within 500M tokens/month per model fair use. That's ~250K deliberations/month. You won't hit it.
+*Within 500M tokens/month per model fair use. That's roughly 250K deliberations/month under fair use.
 
 ## License
 
